@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Picnic Battle</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧺</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <h1>🧺 Picnic Battle 🐜</h1>
+      <p class="tagline">Pack your basket, defend your blanket, and send the ants marching!</p>
+    </header>
+
+    <!-- ================= PLACEMENT SCREEN ================= -->
+    <section id="placement-screen" class="screen">
+      <div class="placement-layout">
+        <div class="board-panel">
+          <h2>My Picnic Blanket</h2>
+          <div id="placement-board" class="board" aria-label="Your picnic blanket, place your food"></div>
+        </div>
+
+        <div class="ship-tray-panel">
+          <h2>Pack Your Basket</h2>
+          <p class="panel-hint" id="placement-hint">Pick a food below, then click your blanket to set it down.</p>
+          <ul id="ship-tray" class="ship-tray"></ul>
+
+          <div class="placement-controls">
+            <button id="rotate-btn" class="btn" type="button">🔄 Rotate</button>
+            <button id="randomize-btn" class="btn" type="button">🎲 Shuffle Basket</button>
+          </div>
+          <button id="start-battle-btn" class="btn btn-primary btn-block" type="button" disabled>
+            Start the Picnic Battle! 🐜
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= BATTLE SCREEN ================= -->
+    <section id="battle-screen" class="screen hidden">
+      <div id="status-bar" class="status-bar">
+        <span id="status-text">Your move — send in the ants!</span>
+      </div>
+
+      <div class="battle-layout">
+        <div class="board-panel">
+          <h2>My Picnic Blanket</h2>
+          <ul id="player-fleet" class="fleet-status"></ul>
+          <div id="player-board" class="board board-small" aria-label="Your picnic blanket"></div>
+        </div>
+
+        <div class="board-panel">
+          <h2>Enemy Picnic Blanket</h2>
+          <ul id="enemy-fleet" class="fleet-status"></ul>
+          <div id="enemy-board" class="board board-small" aria-label="Enemy picnic blanket, click to attack"></div>
+        </div>
+      </div>
+
+      <button id="restart-btn" class="btn btn-secondary" type="button">↺ New Picnic</button>
+    </section>
+
+    <!-- ================= GAME OVER MODAL ================= -->
+    <div id="gameover-modal" class="modal hidden">
+      <div class="modal-content">
+        <h2 id="gameover-title"></h2>
+        <p id="gameover-message"></p>
+        <button id="play-again-btn" class="btn btn-primary" type="button">Play Again</button>
+      </div>
+    </div>
+
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+  </div>
+
+  <script src="js/game.js"></script>
+</body>
+</html>

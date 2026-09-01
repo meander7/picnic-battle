@@ -1,0 +1,444 @@
+/* ===================== Picnic Battle — styles ===================== */
+
+:root {
+  --gingham-red: #c0392b;
+  --gingham-red-dark: #a53125;
+  --gingham-cream: #faf3e0;
+  --wood: #caa06a;
+  --wood-dark: #a9784a;
+  --ink: #3a2b21;
+  --accent: #4c9a2a;
+  --accent-dark: #397a1f;
+  --danger: #d64545;
+  --panel-bg: #fffaf0;
+  --shadow: 0 6px 18px rgba(58, 43, 33, 0.25);
+  font-size: 16px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Nunito", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.08), transparent 40%),
+    repeating-linear-gradient(
+      90deg,
+      var(--wood) 0px,
+      var(--wood) 38px,
+      var(--wood-dark) 38px,
+      var(--wood-dark) 40px
+    );
+  background-attachment: fixed;
+}
+
+.app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px 16px 60px;
+}
+
+.app-header {
+  text-align: center;
+  color: #fff8ea;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
+  margin-bottom: 20px;
+}
+
+.app-header h1 {
+  font-family: "Baloo 2", sans-serif;
+  font-size: 2.4rem;
+  margin: 0 0 4px;
+  letter-spacing: 0.5px;
+}
+
+.tagline {
+  margin: 0;
+  font-weight: 600;
+  opacity: 0.95;
+}
+
+.screen.hidden {
+  display: none;
+}
+
+/* ---------- Panels & layout ---------- */
+
+.placement-layout,
+.battle-layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.board-panel {
+  background: var(--panel-bg);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+  border: 4px solid #fff;
+}
+
+.board-panel h2 {
+  font-family: "Baloo 2", sans-serif;
+  margin: 0 0 10px;
+  text-align: center;
+  font-size: 1.2rem;
+  color: var(--gingham-red-dark);
+}
+
+.ship-tray-panel {
+  background: var(--panel-bg);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: var(--shadow);
+  border: 4px solid #fff;
+  width: 280px;
+}
+
+.ship-tray-panel h2 {
+  font-family: "Baloo 2", sans-serif;
+  margin: 0 0 6px;
+  text-align: center;
+  font-size: 1.2rem;
+  color: var(--gingham-red-dark);
+}
+
+.panel-hint {
+  text-align: center;
+  font-size: 0.85rem;
+  margin: 0 0 12px;
+  min-height: 2.4em;
+  color: #6b5644;
+}
+
+/* ---------- Board grid ---------- */
+
+.board {
+  --cell: 40px;
+  display: grid;
+  grid-template-columns: repeat(10, var(--cell));
+  grid-template-rows: repeat(10, var(--cell));
+  gap: 2px;
+  background: #6b4a2b;
+  padding: 6px;
+  border-radius: 10px;
+  user-select: none;
+}
+
+.board-small {
+  --cell: 34px;
+}
+
+.cell {
+  width: var(--cell);
+  height: var(--cell);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-size: calc(var(--cell) * 0.55);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: filter 0.15s ease, transform 0.1s ease;
+}
+
+.cell.checker-a {
+  background: var(--gingham-red);
+}
+
+.cell.checker-b {
+  background: var(--gingham-cream);
+}
+
+.cell:hover:not(.disabled):not(.attacked) {
+  filter: brightness(1.12);
+}
+
+.cell.disabled,
+.cell.attacked {
+  cursor: default;
+}
+
+/* ship preview / placement */
+
+.cell.ship-here {
+  background: #e7c98a;
+  box-shadow: inset 0 0 0 2px #b98a3e;
+}
+
+.cell.preview-ok {
+  background: #bfe3a4 !important;
+}
+
+.cell.preview-bad {
+  background: #f2a9a9 !important;
+}
+
+/* attack results */
+
+.cell.miss {
+  background: #d7e6ef;
+}
+
+.cell.hit {
+  background: #e77c6a;
+  animation: shake 0.35s ease;
+}
+
+.cell.sunk {
+  background: #c65c4c;
+}
+
+.cell .mark {
+  pointer-events: none;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.25));
+}
+
+.cell .mark.ant {
+  font-size: calc(var(--cell) * 0.45);
+}
+
+@keyframes shake {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-2px, 1px); }
+  50% { transform: translate(2px, -1px); }
+  75% { transform: translate(-1px, -1px); }
+}
+
+/* ---------- Ship tray (placement) ---------- */
+
+.ship-tray {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ship-tray-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: #f3e6c8;
+  border: 2px solid transparent;
+  cursor: pointer;
+  font-weight: 700;
+  font-family: "Nunito", sans-serif;
+}
+
+.ship-tray-item .emoji-row {
+  letter-spacing: 2px;
+  font-size: 1.1rem;
+}
+
+.ship-tray-item .name {
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+.ship-tray-item.selected {
+  border-color: var(--accent);
+  background: #e3f2d6;
+}
+
+.ship-tray-item.placed {
+  opacity: 0.45;
+  cursor: default;
+  text-decoration: line-through;
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  font-family: "Baloo 2", sans-serif;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 16px;
+  cursor: pointer;
+  background: #f3e6c8;
+  color: var(--ink);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.15);
+  transition: transform 0.08s ease, filter 0.15s ease;
+}
+
+.btn:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-dark);
+}
+
+.btn-secondary {
+  background: var(--gingham-red);
+  color: #fff;
+  display: block;
+  margin: 22px auto 0;
+}
+
+.btn-block {
+  display: block;
+  width: 100%;
+  margin-top: 14px;
+}
+
+.placement-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.placement-controls .btn {
+  flex: 1;
+}
+
+/* ---------- Battle status & fleet ---------- */
+
+.status-bar {
+  text-align: center;
+  margin: 0 auto 18px;
+  max-width: 520px;
+  background: #fff8ea;
+  border-radius: 999px;
+  padding: 10px 18px;
+  box-shadow: var(--shadow);
+  font-weight: 700;
+  font-family: "Baloo 2", sans-serif;
+  color: var(--gingham-red-dark);
+}
+
+.fleet-status {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 0;
+  margin: 0 0 10px;
+  font-size: 1.3rem;
+}
+
+.fleet-status li {
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.fleet-status li.sunk-item {
+  opacity: 0.25;
+  filter: grayscale(1);
+}
+
+.fleet-status li.unknown {
+  filter: grayscale(1) brightness(1.6);
+}
+
+/* ---------- Toasts ---------- */
+
+.toast-container {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.toast {
+  background: #3a2b21;
+  color: #fff8ea;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-weight: 700;
+  box-shadow: var(--shadow);
+  animation: toast-in 0.25s ease, toast-out 0.4s ease 2.6s forwards;
+  white-space: nowrap;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes toast-out {
+  from { opacity: 1; }
+  to { opacity: 0; transform: translateY(-8px); }
+}
+
+/* ---------- Modal ---------- */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(58, 43, 33, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: var(--panel-bg);
+  border-radius: 18px;
+  padding: 32px;
+  text-align: center;
+  max-width: 340px;
+  box-shadow: var(--shadow);
+  border: 4px solid #fff;
+}
+
+.modal-content h2 {
+  font-family: "Baloo 2", sans-serif;
+  margin-top: 0;
+  color: var(--gingham-red-dark);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 720px) {
+  :root {
+    font-size: 14px;
+  }
+  .board {
+    --cell: 30px;
+  }
+  .board-small {
+    --cell: 26px;
+  }
+  .ship-tray-panel {
+    width: 100%;
+    max-width: 340px;
+  }
+}
