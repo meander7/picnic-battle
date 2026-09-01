@@ -18,6 +18,26 @@
   const HORIZONTAL = "horizontal";
   const VERTICAL = "vertical";
 
+  // A tiny ant silhouette, colored via `currentColor` so the same markup can
+  // be tinted dark (a miss) or red (a hit) purely with CSS.
+  const ANT_SVG = `<svg viewBox="0 0 34 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <g stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none">
+      <path d="M8 8 L3 4" /><path d="M8 8 L4 9" />
+      <path d="M15 12 L9 7" /><path d="M15 12 L8 12" /><path d="M15 12 L9 17" />
+      <path d="M23 14 L17 9" /><path d="M23 14 L16 14" /><path d="M23 14 L17 19" />
+    </g>
+    <g fill="currentColor">
+      <circle cx="8" cy="8" r="3.4" />
+      <circle cx="15" cy="12" r="4" />
+      <ellipse cx="25" cy="14" rx="6.2" ry="5.4" />
+    </g>
+  </svg>`;
+
+  function antIconHTML(kind, extraClass) {
+    const cls = ["ant-icon", `ant-${kind}`, extraClass].filter(Boolean).join(" ");
+    return `<span class="${cls}">${ANT_SVG}</span>`;
+  }
+
   // ---------- Small helpers ----------
 
   function makeEmptyGrid() {
@@ -378,13 +398,23 @@
 
   function markFor(cellData, board) {
     if (!cellData.attacked) return null;
-    if (!cellData.shipId) return { cls: "miss", mark: "🐜" };
+    if (!cellData.shipId) return { cls: "miss" };
     const ship = board.ships[cellData.shipId];
-    if (ship.sunk) {
-      const def = ship.def;
-      return { cls: "sunk", mark: def.emoji };
+    if (ship.sunk) return { cls: "sunk", emoji: ship.def.emoji };
+    return { cls: "hit" };
+  }
+
+  // Fills a cell with the right visual for an attack result: a dark ant for
+  // a miss, a red ant for a hit, or the revealed food (plus a red ant badge)
+  // once its ship is fully sunk.
+  function renderAttackResult(element, result) {
+    element.classList.add("attacked", result.cls);
+    if (result.cls === "sunk") {
+      element.innerHTML =
+        `<span class="food-emoji">${result.emoji}</span>` + antIconHTML("hit", "ant-badge");
+    } else {
+      element.innerHTML = antIconHTML(result.cls === "hit" ? "hit" : "miss");
     }
-    return { cls: "hit", mark: "🐜🐜" };
   }
 
   function renderPlayerBoard() {
@@ -403,10 +433,7 @@
         }
 
         const result = markFor(cellData, board);
-        if (result) {
-          div.classList.add("attacked", result.cls);
-          div.textContent = result.mark;
-        }
+        if (result) renderAttackResult(div, result);
         el.playerBoard.appendChild(div);
       }
     }
@@ -425,8 +452,7 @@
 
         const result = markFor(cellData, board);
         if (result) {
-          btn.classList.add("attacked", result.cls);
-          btn.textContent = result.mark;
+          renderAttackResult(btn, result);
           btn.disabled = true;
         } else if (!state.playersTurn || state.phase !== "battle") {
           btn.classList.add("disabled");
