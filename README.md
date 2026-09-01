@@ -10,11 +10,20 @@ It's a single-player game against a simple computer opponent: no build step, no 
 
 ## Play it
 
-Open `index.html` directly in a browser, or serve the folder with any static file server, e.g.:
+Two ways to run it, both with no build step and no dependencies:
+
+- **Single file:** open [`standalone.html`](standalone.html) directly in a browser (double-click it, or drag it into a browser tab). Everything — markup, styles, and game logic — is bundled into that one file, so it works with no server at all.
+- **From source:** open `index.html` directly, or serve the folder with any static file server, e.g.:
+
+  ```sh
+  python3 -m http.server 8000
+  # then visit http://localhost:8000
+  ```
+
+`standalone.html` is generated from `index.html`, `css/style.css`, and `js/game.js` — if you edit those, regenerate it with:
 
 ```sh
-python3 -m http.server 8000
-# then visit http://localhost:8000
+python3 scripts/build_standalone.py
 ```
 
 ## How to play
@@ -26,7 +35,9 @@ python3 -m http.server 8000
 ## Project structure
 
 ```
-index.html      Markup for the placement and battle screens
-css/style.css   Picnic/gingham styling, board grid, animations
-js/game.js      Game state, board logic, simple hunt/target AI, rendering
+index.html                     Markup for the placement and battle screens
+css/style.css                  Picnic/gingham styling, board grid, animations
+js/game.js                     Game state, board logic, simple hunt/target AI, rendering
+standalone.html                Generated single-file bundle of the three files above
+scripts/build_standalone.py    Regenerates standalone.html from source
 ```
