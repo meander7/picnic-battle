@@ -224,17 +224,29 @@
     modalTitle: document.getElementById("gameover-title"),
     modalMessage: document.getElementById("gameover-message"),
     playAgainBtn: document.getElementById("play-again-btn"),
-    toastContainer: document.getElementById("toast-container"),
+    battleLog: document.getElementById("battle-log"),
   };
 
-  // ---------- Toasts ----------
+  // ---------- Battle log (chat-style feed) ----------
 
-  function toast(message) {
-    const node = document.createElement("div");
-    node.className = "toast";
-    node.textContent = message;
-    el.toastContainer.appendChild(node);
-    setTimeout(() => node.remove(), 3000);
+  const MAX_LOG_ENTRIES = 60;
+
+  // kind: "player" (your ants reporting in, right-aligned), "enemy" (the
+  // enemy's ants, left-aligned), or "event" (sunk ships, game over — a
+  // centered banner both sides would agree on).
+  function logMessage(message, kind) {
+    const entry = document.createElement("div");
+    entry.className = `log-entry ${kind}`;
+    entry.textContent = message;
+    el.battleLog.appendChild(entry);
+    while (el.battleLog.children.length > MAX_LOG_ENTRIES) {
+      el.battleLog.removeChild(el.battleLog.firstChild);
+    }
+    el.battleLog.scrollTop = el.battleLog.scrollHeight;
+  }
+
+  function clearLog() {
+    el.battleLog.innerHTML = "";
   }
 
   // ---------- Placement screen ----------
@@ -330,7 +342,8 @@
       return;
     }
     if (!canPlace(state.playerBoard, row, col, def.size, state.placement.orientation)) {
-      toast("Can't set food there — too close to another item or off the blanket!");
+      el.placementHint.textContent =
+        "Can't set food there — too close to another item or off the blanket!";
       return;
     }
     placeShip(state.playerBoard, def, row, col, state.placement.orientation);
@@ -480,6 +493,8 @@
     el.placementScreen.classList.add("hidden");
     el.battleScreen.classList.remove("hidden");
     el.statusText.textContent = "Your move — click the enemy blanket to send in the ants!";
+    clearLog();
+    logMessage("🧺 The picnic battle begins! Send in the ants.", "event");
     renderBattle();
   }
 
@@ -506,11 +521,11 @@
   function announcePlayerResult(result) {
     if (result.sunk) {
       const def = shipById(result.shipId);
-      toast(`Direct hit! The enemy's ${def.name} got swarmed by ants! ${def.emoji}🐜`);
+      logMessage(`Direct hit! The enemy's ${def.name} got swarmed by ants! ${def.emoji}🐜`, "event");
     } else if (result.hit) {
-      toast("Your ants found food! 🐜🍽️");
+      logMessage("Your ants found food! 🐜🍽️", "player");
     } else {
-      toast("Your ants wandered off empty-handed. 🐜");
+      logMessage("Your ants wandered off empty-handed. 🐜", "player");
     }
   }
 
@@ -523,11 +538,11 @@
 
     if (result.sunk) {
       const def = shipById(result.shipId);
-      toast(`Uh oh! Enemy ants swarmed your ${def.name}! ${def.emoji}🐜`);
+      logMessage(`Uh oh! Enemy ants swarmed your ${def.name}! ${def.emoji}🐜`, "event");
     } else if (result.hit) {
-      toast("The enemy's ants found your food! 🐜");
+      logMessage("The enemy's ants found your food! 🐜", "enemy");
     } else {
-      toast("The enemy's ants wandered off empty-handed. 🐜");
+      logMessage("The enemy's ants wandered off empty-handed. 🐜", "enemy");
     }
 
     renderBattle();

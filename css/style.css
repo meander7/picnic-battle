@@ -43,7 +43,7 @@ body {
 }
 
 .app {
-  max-width: 1100px;
+  max-width: 1220px;
   margin: 0 auto;
   padding: 20px 16px 60px;
 }
@@ -416,39 +416,63 @@ body {
   filter: grayscale(1) brightness(1.5);
 }
 
-/* ---------- Toasts ---------- */
+/* ---------- Battle log (chat-style sidebar) ---------- */
 
-.toast-container {
-  position: fixed;
-  top: 16px;
-  left: 50%;
-  transform: translateX(-50%);
+.log-panel {
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+}
+
+.battle-log {
+  flex: 1;
+  height: 420px;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  z-index: 50;
-  pointer-events: none;
+  padding: 4px 6px 4px 4px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--basket-tan) transparent;
 }
 
-.toast {
-  background: var(--ink);
-  color: var(--gingham-cream);
-  padding: 10px 18px;
-  border-radius: 999px;
+.log-entry {
+  max-width: 88%;
+  padding: 8px 12px;
+  border-radius: 14px;
+  font-size: 0.82rem;
+  line-height: 1.35;
+  animation: log-in 0.2s ease;
+}
+
+.log-entry.player {
+  align-self: flex-end;
+  background: #e5f2da;
+  border: 1px solid #cfe8ba;
+  border-bottom-right-radius: 4px;
+}
+
+.log-entry.enemy {
+  align-self: flex-start;
+  background: var(--gingham-cream);
+  border: 1px solid #f0d9bd;
+  border-bottom-left-radius: 4px;
+}
+
+.log-entry.event {
+  align-self: center;
+  max-width: 100%;
+  text-align: center;
+  font-family: "Baloo 2", sans-serif;
   font-weight: 700;
-  box-shadow: var(--shadow);
-  animation: toast-in 0.25s ease, toast-out 0.4s ease 2.6s forwards;
-  white-space: nowrap;
+  color: var(--gingham-red-dark);
+  background: #fbe4d8;
+  border: 1px solid #f2c3ac;
 }
 
-@keyframes toast-in {
-  from { opacity: 0; transform: translateY(-12px); }
+@keyframes log-in {
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes toast-out {
-  from { opacity: 1; }
-  to { opacity: 0; transform: translateY(-8px); }
 }
 
 /* ---------- Modal ---------- */
@@ -485,6 +509,19 @@ body {
 
 /* ---------- Responsive ---------- */
 
+/* Between the full three-across layout and the small-screen stack: keep the
+   two boards full-size side by side and let the log span underneath rather
+   than awkwardly wrapping to its own half-empty row. */
+@media (max-width: 1180px) {
+  .log-panel {
+    width: 100%;
+    max-width: 864px;
+  }
+  .battle-log {
+    height: 220px;
+  }
+}
+
 @media (max-width: 720px) {
   :root {
     font-size: 14px;
@@ -495,8 +532,12 @@ body {
   .board-small {
     --cell: 26px;
   }
-  .ship-tray-panel {
+  .ship-tray-panel,
+  .log-panel {
     width: 100%;
     max-width: 340px;
+  }
+  .battle-log {
+    height: 220px;
   }
 }
